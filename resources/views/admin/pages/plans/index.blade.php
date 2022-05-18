@@ -3,13 +3,29 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Planos</h1>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <h1>Planos <a href="{{ route('plans.create') }}">
+            <span class="btn btn-dark material-symbols-outlined">add_circle</span>
+        </a></h1>
+
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active"><a href="{{ route('plans.index') }}">Planos</a></li>
+    </ol>
 @stop
 
 @section('content')
     <div class="card">
         <div class="card-header">
-            #filtros
+            <form action="{{ route('plans.search') }}" method="POST" class="form form-inline">
+                @csrf
+
+                <input type="text" name="filter" placeholder="Nome" class="form-control"
+                    value="{{ $filters['filter'] ?? '' }}">
+                <button type="submit" class="btn btn-dark">Filtrar</button>
+            </form>
         </div>
         <div class="card-body">
             <table class="table table-condensed">
@@ -17,7 +33,7 @@
                     <tr>
                         <th>Nome</th>
                         <th>Preço</th>
-                        <th width='50'>Ações</th>
+                        <th width='150'>Ações</th>
                     </tr>
                 </thead>
 
@@ -28,10 +44,11 @@
                                 {{ $plan->name }}
                             </td>
                             <td>
-                                {{ $plan->price }}
+                                {{ 'R$' . number_format($plan->price, 2, ',', '.') }}
                             </td>
                             <td style="width=10px">
-                                <a href="" class="btn btn-warning">VER</a>
+                                <a href="{{ route('plans.edit', $plan->url) }}" class="btn btn-info">Edit</a>
+                                <a href="{{ route('plans.show', $plan->url) }}" class="btn btn-warning">VER</a>
                             </td>
                         </tr>
                     @endforeach
@@ -39,7 +56,12 @@
             </table>
         </div>
         <div class="card-footer">
-            {!! $plans->links() !!}
+
+            @if (isset($filters))
+                {!! $plans->appends($filters)->links() !!}
+            @else
+                {!! $plans->links() !!}
+            @endif
         </div>
     </div>
 @stop
