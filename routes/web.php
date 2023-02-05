@@ -8,12 +8,25 @@ Route::prefix('admin')
     ->group(function () {
 
         /**
+         * Permission x Profile
+         */
+        Route::get('profiles/{id}/permission/{idPermission}/detach', 'ACL\PermissionProfileController@detachPermissionsProfile')->name('profiles.permissions.detach');
+        Route::post('profiles/{id}/permissions', 'ACL\PermissionProfileController@attachPermissionsProfile')->name('profiles.permissions.attach');
+        Route::any('profiles/{id}/permissions/create', 'ACL\PermissionProfileController@permissionsAvailable')->name('profiles.permissions.available');
+        Route::get('profiles/{id}/permissions', 'ACL\PermissionProfileController@permissions')->name('profiles.permissions');
+        Route::get('permissions/{id}/profile', 'ACL\PermissionProfileController@profiles')->name('permissions.profiles');
+
+        /**
          * Routes Profiles
          */
         Route::any('profiles/search', 'ACL\ProfileController@search')->name('profiles.search');
         Route::resource('profiles', 'ACL\ProfileController');
 
-
+        /**
+         * Routes Permissions
+         */
+        Route::any('permissions/search', 'ACL\PermissionController@search')->name('permissions.search');
+        Route::resource('permissions', 'ACL\PermissionController');
 
         /**
          * Routes Details Plans
@@ -29,7 +42,6 @@ Route::prefix('admin')
         /**
          * Routes Plans
          */
-
         Route::get('plans/create', 'PlanController@create')->name('plans.create');
         Route::put('plans/{url}', 'PlanController@update')->name('plans.update');
         Route::get('plans/{url}', 'PlanController@edit')->name('plans.edit');
@@ -42,7 +54,6 @@ Route::prefix('admin')
         /**
          * Home Dashboard
          */
-
         Route::get('/', 'PlanController@index')->name('admin.index');
     });
 
